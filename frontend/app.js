@@ -283,15 +283,20 @@ async function loadAllGroqModels() {
       const select = document.getElementById('modelSelect');
       const badge = document.getElementById('modelTagBadge');
 
-      select.addEventListener('change', () => {
+      const updateBadge = () => {
         const selectedVal = select.value;
         const meta = state.modelsCatalog[selectedVal];
-        if (meta && meta.context_window) {
-          badge.textContent = `${meta.context_window >= 1000 ? Math.round(meta.context_window/1000) + 'k' : meta.context_window} Context`;
+        if (meta && meta.badge) {
+          badge.textContent = meta.badge;
+        } else if (meta && meta.context_window) {
+          badge.textContent = `${meta.speed ? meta.speed + ' • ' : ''}${meta.context_window >= 1000 ? Math.round(meta.context_window/1000) + 'k' : meta.context_window} Context`;
         } else {
-          badge.textContent = 'Groq Console Model';
+          badge.textContent = 'Groq Official Model';
         }
-      });
+      };
+
+      select.addEventListener('change', updateBadge);
+      updateBadge();
 
       // Custom model override button
       const customInput = document.getElementById('customModelInput');

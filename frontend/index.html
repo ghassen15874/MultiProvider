@@ -157,22 +157,23 @@
               <span id="modelTagBadge" style="font-size: 0.72rem; color: var(--accent-cyan); font-family: var(--font-mono);">131k Context</span>
             </label>
             <select id="modelSelect" class="custom-select">
-              <optgroup label="🧠 Chat & Reasoning Models">
-                <option value="qwen/qwen3.8-27b" selected>Qwen 3.8 (27B) — Best Code & Reasoning</option>
-                <option value="allam-2-7b">ALLaM 2 (7B) — Arabic Specialist (SDAIA)</option>
-                <option value="openai/gpt-oss-120b">GPT OSS 120B — Deep Reasoning (OpenAI)</option>
-                <option value="openai/gpt-oss-20b">GPT OSS 20B — Fast Reasoning (OpenAI)</option>
-              </optgroup>
-              <optgroup label="🛡️ Safety & Safeguard Models">
-                <option value="openai/gpt-oss-safeguard-20b">GPT OSS Safeguard 20B — Safety Filter</option>
-                <option value="meta-llama/llama-prompt-guard-2-86m">Llama Prompt Guard 2 (86M) — Prompt Defense</option>
-                <option value="meta-llama/llama-prompt-guard-2-22m">Llama Prompt Guard 2 (22M) — Lightweight Guard</option>
-              </optgroup>
-              <optgroup label="🎙️ Speech & Audio Models">
-                <option value="canopylabs/orpheus-v1-english">Canopy Labs Orpheus V1 English (Speech)</option>
-                <option value="canopylabs/orpheus-arabic-saudi">Canopy Labs Orpheus Arabic Saudi (Speech)</option>
+              <optgroup label="🚀 Production Models (Enterprise Tier)">
+                <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant (560 t/s • 131k Context)</option>
+                <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (280 t/s • 131k Context)</option>
+                <option value="openai/gpt-oss-120b">GPT OSS 120B (500 t/s • 131k Context)</option>
+                <option value="openai/gpt-oss-20b">GPT OSS 20B (1000 t/s • 131k Context)</option>
                 <option value="whisper-large-v3">Whisper Large V3 (Audio Transcription)</option>
                 <option value="whisper-large-v3-turbo">Whisper Large V3 Turbo (Fast Audio)</option>
+              </optgroup>
+              <optgroup label="🧪 Preview Models (Evaluation Tier)">
+                <option value="qwen/qwen3.8-27b" selected>Qwen/Qwen3.8-27B (450 t/s • 131k Context)</option>
+                <option value="minimaxai/minimax-m2.7">MiniMax M2.7 (260 t/s • 196k Context)</option>
+                <option value="allam-2-7b">ALLaM 2 (7B Instruct • 850 t/s • Arabic)</option>
+                <option value="openai/gpt-oss-safeguard-20b">Safety GPT OSS 20B (1000 t/s • Safety)</option>
+                <option value="meta-llama/llama-prompt-guard-2-86m">Prompt Guard 2 86M (Prompt Defense)</option>
+                <option value="meta-llama/llama-prompt-guard-2-22m">Llama Prompt Guard 2 22M (Prompt Defense)</option>
+                <option value="canopylabs/orpheus-arabic-saudi">Canopy Labs Orpheus Arabic Saudi (Speech)</option>
+                <option value="canopylabs/orpheus-v1-english">Canopy Labs Orpheus V1 English (Speech)</option>
               </optgroup>
             </select>
           </div>
