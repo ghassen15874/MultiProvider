@@ -28,6 +28,10 @@ class InferenceService:
         return fallback_manager
 
     @staticmethod
+    def get_provider() -> GroqProvider:
+        return groq_provider
+
+    @staticmethod
     def get_pool_status() -> Dict[str, Any]:
         snapshot = fallback_manager.get_snapshot()
         return {

@@ -19,9 +19,20 @@ class AddKeyRequest(BaseModel):
 
 @router.get("")
 async def list_models():
-    """Returns active models and capability catalog."""
+    """Returns active models from Groq console and capability catalog."""
+    provider = InferenceService.get_provider()
+    keys = InferenceService.get_fallback_manager().get_available_keys()
+    api_key = keys[0]["api_key"] if keys else (settings.API_KEYS[0] if settings.API_KEYS else "")
+
+    groq_models = []
+    if api_key:
+        ok, data, _ = await provider.list_models(api_key)
+        if ok and isinstance(data, list):
+            groq_models = data
+
     return {
         "status": "ok",
+        "groq_models": groq_models,
         "models": settings.MODELS,
         "default_model": settings.DEFAULT_MODEL
     }

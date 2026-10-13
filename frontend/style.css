@@ -817,59 +817,91 @@ body {
   white-space: pre;
 }
 
-/* Integration Guide Code Snippets */
+/* Integration Guide Code Snippets & Syntax Highlighting */
 .snippet-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
   gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .code-block-wrapper {
-  padding: 1.25rem;
+  padding: 1.5rem;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .code-block-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .code-lang-tag {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--groq-orange);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .code-copy-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  padding: 4px 10px;
+  background: rgba(245, 80, 54, 0.15);
+  border: 1px solid rgba(245, 80, 54, 0.35);
+  color: #ff856c;
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: var(--transition);
 }
 
 .code-copy-btn:hover {
+  background: var(--groq-orange);
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12px var(--groq-orange-glow);
+  transform: translateY(-1px);
+}
+
+.code-copy-btn.copied {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
 }
 
 .code-snippet {
-  background: #090c13;
-  border: 1px solid var(--border-subtle);
+  background: #080b12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
-  padding: 14px;
+  padding: 16px 18px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: #e2e8f0;
   overflow-x: auto;
-  line-height: 1.6;
+  line-height: 1.7;
+  max-height: none !important; /* Full visibility: never clip the bottom of the code! */
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
 }
+
+/* Syntax Highlighting Tokens */
+.hl-keyword { color: #f43f5e; font-weight: 600; } /* def, class, import, from, return, await, async */
+.hl-string { color: #34d399; } /* strings */
+.hl-func { color: #38bdf8; font-weight: 600; } /* function calls */
+.hl-comment { color: #64748b; font-style: italic; } /* comments */
+.hl-number { color: #fbbf24; } /* numbers */
+.hl-param { color: #c084fc; } /* parameters & keys */
+.hl-punct { color: #94a3b8; } /* symbols */
+.hl-decorator { color: #f472b6; } /* decorators */
 
 /* Modal */
 .modal-overlay {

@@ -19,18 +19,13 @@
       <span class="brand-badge" id="headerStrategyBadge">Smart-Adaptive</span>
     </div>
 
+    <!-- Navigation Tabs: Streamlined to Monitor, Playground, and SDK -->
     <nav class="nav-tabs" aria-label="Main Navigation">
       <button class="tab-btn active" data-tab="tab-monitor" id="navMonitorBtn">
         <span>📊</span> Key Pool Monitor
       </button>
       <button class="tab-btn" data-tab="tab-playground" id="navPlaygroundBtn">
         <span>💬</span> Playground
-      </button>
-      <button class="tab-btn" data-tab="tab-arabic" id="navArabicBtn">
-        <span>🎬</span> Arabic Video Script
-      </button>
-      <button class="tab-btn" data-tab="tab-webdesign" id="navWebDesignBtn">
-        <span>💻</span> Web Design & Sandbox
       </button>
       <button class="tab-btn" data-tab="tab-sdk" id="navSdkBtn">
         <span>📦</span> Integration SDK
@@ -103,13 +98,13 @@
 
 
     <!-- ========================================================
-         TAB 2: INFERENCE PLAYGROUND & CHAT
+         TAB 2: INFERENCE PLAYGROUND & CHAT (ALL GROQ MODELS)
          ======================================================== -->
     <section class="tab-pane" id="tab-playground">
       <div class="section-header">
         <div>
           <h2 class="section-title"><span>💬</span> Multi-Model Inference Playground</h2>
-          <p class="section-desc">Test real-time chat and streaming across all active Groq models with seamless key rotation.</p>
+          <p class="section-desc">Test real-time chat and streaming across all active Groq console models with seamless key rotation.</p>
         </div>
       </div>
 
@@ -117,14 +112,38 @@
         <!-- Sidebar Controls -->
         <aside class="playground-sidebar glass">
           <div class="control-group">
-            <label class="control-label" for="modelSelect">Active Model:</label>
+            <label class="control-label" for="modelSelect">
+              <span>Active Groq Model:</span>
+              <span id="modelTagBadge" style="font-size: 0.72rem; color: var(--accent-cyan); font-family: var(--font-mono);">131k Context</span>
+            </label>
             <select id="modelSelect" class="custom-select">
-              <option value="qwen/qwen3.8-27b">Qwen 3.8 (27B) - Best Code & Reasoning</option>
-              <option value="allam-2-7b">ALLaM 2 (7B) - Arabic Specialist</option>
-              <option value="openai/gpt-oss-120b">GPT OSS 120B - Deep Reasoning</option>
-              <option value="openai/gpt-oss-20b">GPT OSS 20B - Fast Reasoning</option>
-              <option value="openai/gpt-oss-safeguard-20b">GPT OSS Safeguard 20B - Moderation</option>
+              <optgroup label="🧠 Chat & Reasoning Models">
+                <option value="qwen/qwen3.8-27b" selected>Qwen 3.8 (27B) — Best Code & Reasoning</option>
+                <option value="allam-2-7b">ALLaM 2 (7B) — Arabic Specialist (SDAIA)</option>
+                <option value="openai/gpt-oss-120b">GPT OSS 120B — Deep Reasoning (OpenAI)</option>
+                <option value="openai/gpt-oss-20b">GPT OSS 20B — Fast Reasoning (OpenAI)</option>
+              </optgroup>
+              <optgroup label="🛡️ Safety & Safeguard Models">
+                <option value="openai/gpt-oss-safeguard-20b">GPT OSS Safeguard 20B — Safety Filter</option>
+                <option value="meta-llama/llama-prompt-guard-2-86m">Llama Prompt Guard 2 (86M) — Prompt Defense</option>
+                <option value="meta-llama/llama-prompt-guard-2-22m">Llama Prompt Guard 2 (22M) — Lightweight Guard</option>
+              </optgroup>
+              <optgroup label="🎙️ Speech & Audio Models">
+                <option value="canopylabs/orpheus-v1-english">Canopy Labs Orpheus V1 English (Speech)</option>
+                <option value="canopylabs/orpheus-arabic-saudi">Canopy Labs Orpheus Arabic Saudi (Speech)</option>
+                <option value="whisper-large-v3">Whisper Large V3 (Audio Transcription)</option>
+                <option value="whisper-large-v3-turbo">Whisper Large V3 Turbo (Fast Audio)</option>
+              </optgroup>
             </select>
+          </div>
+
+          <!-- Custom Model ID Input option -->
+          <div class="control-group" style="margin-top: -4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Custom Model Override:</span>
+              <button id="applyCustomModelBtn" style="background: none; border: none; color: var(--groq-orange); font-size: 0.75rem; cursor: pointer; text-decoration: underline;">Set</button>
+            </div>
+            <input type="text" id="customModelInput" class="control-input" placeholder="e.g. meta-llama/llama-3.3-70b-versatile" style="font-size: 0.8rem; padding: 6px 10px;">
           </div>
 
           <div class="control-group">
@@ -162,17 +181,19 @@
         <div class="chat-container glass">
           <div class="chat-history" id="chatHistory">
             <div class="chat-bubble assistant">
-              <p>👋 Welcome! I am ready to test any model via the Universal AI Framework with automatic 6-key rotation and failover. What would you like to run?</p>
+              <p>👋 Welcome! I am connected to all Groq console models with seamless 6-key auto-failover and smart token headroom balancing. Select any model from the sidebar and type your prompt below!</p>
               <div class="bubble-meta">
-                <span>⚡ Key Pool Ready</span>
+                <span>⚡ 6 Keys Ready</span>
                 <span>•</span>
-                <span>Groq High-Speed API</span>
+                <span>Smart-Adaptive Mode</span>
+                <span>•</span>
+                <span>All Groq Models Online</span>
               </div>
             </div>
           </div>
 
           <div class="chat-input-bar">
-            <input type="text" id="chatInput" class="chat-input" placeholder="Type a prompt or question..." autocomplete="off">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Type a prompt or question (in English, Arabic, or Code)..." autocomplete="off">
             <button class="btn btn-primary" id="sendChatBtn">
               <span>Send</span>
             </button>
@@ -183,172 +204,166 @@
 
 
     <!-- ========================================================
-         TAB 3: ARABIC VIDEO SCRIPT BENCHMARK
-         ======================================================== -->
-    <section class="tab-pane" id="tab-arabic">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title"><span>🎬</span> اختبار كتابة سيناريو فيديو احترافي باللغة العربية</h2>
-          <p class="section-desc">مقارنة شاملة بين النماذج لكتابة سيناريو تيك توك وريلز مع خطاف جاذب، حركة كاميرا، ومؤثرات صوتية (SFX).</p>
-        </div>
-        <button class="btn btn-primary" id="runArabicBenchmarkBtn">
-          <span>🚀</span> تشغيل الاختبار على جميع النماذج
-        </button>
-      </div>
-
-      <div class="benchmark-presets">
-        <span style="font-size: 0.85rem; color: var(--text-muted); align-self: center;">موضوعات مقترحة:</span>
-        <button class="preset-chip arabic-preset" data-topic="كيف تستخدم الذكاء الاصطناعي لزيادة إنتاجيتك بنسبة 300% في عام 2026">💡 زيادة الإنتاجية 300% بالذكاء الاصطناعي</button>
-        <button class="preset-chip arabic-preset" data-topic="إعلان منتج ساعة ذكية جديدة بميزة صحية ثورية بأسلوب خطاف يمنع التمرير">⌚ إعلان تجاري تشويقي لساعة ذكية</button>
-        <button class="preset-chip arabic-preset" data-topic="أقوى 3 أدوات ذكاء اصطناعي سرية لا يعرفها 99% من الناس">🔥 3 أدوات ذكاء اصطناعي سرية</button>
-        <button class="preset-chip arabic-preset" data-topic="قصة نجاح رائد أعمال بدأ من الصفر وحقق أول مليون دولار في 18 شهر">🚀 قصة ملهمة: من الصفر إلى مليون دولار</button>
-      </div>
-
-      <div class="glass" style="padding: 1.25rem; margin-bottom: 1.5rem;">
-        <label class="control-label" for="arabicTopicInput" style="margin-bottom: 6px;">موضوع السيناريو المطلوب:</label>
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="arabicTopicInput" class="control-input" style="flex: 1; font-family: var(--font-arabic); direction: rtl;" value="كيف تستخدم الذكاء الاصطناعي لزيادة إنتاجيتك بنسبة 300% في عام 2026">
-        </div>
-      </div>
-
-      <!-- Arabic Benchmark Cards Grid -->
-      <div class="benchmark-card-grid" id="arabicBenchmarkGrid">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-
-    <!-- ========================================================
-         TAB 4: WEB DESIGN & LIVE CODE SANDBOX BENCHMARK
-         ======================================================== -->
-    <section class="tab-pane" id="tab-webdesign">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title"><span>💻</span> اختبار برمجة كود الويب التفاعلي (HTML/CSS/JS)</h2>
-          <p class="section-desc">اختبار النماذج في بناء تطبيقات ويب تفاعلية متكاملة مع نافذة تشغيل ومعاينة حية ومباشرة (Live Sandbox).</p>
-        </div>
-        <button class="btn btn-primary" id="runCodeBenchmarkBtn">
-          <span>🚀</span> تشغيل الاختبار ومعاينة الكود
-        </button>
-      </div>
-
-      <div class="benchmark-presets">
-        <span style="font-size: 0.85rem; color: var(--text-muted); align-self: center;">تحديات البرمجة الجاهزة:</span>
-        <button class="preset-chip code-preset" data-challenge="pomodoro">⏱️ مؤقت بومودورو تفاعلي مع حلقة SVG وصوت</button>
-        <button class="preset-chip code-preset" data-challenge="crypto">📈 بطاقة أسعار عملات رقمية مع رسم بياني Canvas مباشر</button>
-        <button class="preset-chip code-preset" data-challenge="fireworks">🎆 محاكاة ألعاب نارية وجزيئات Canvas تفاعلية بالماوس</button>
-        <button class="preset-chip code-preset" data-challenge="kanban">📋 لوحة كانبان مهام تفاعلية مع السحب والإفلات (Drag & Drop)</button>
-      </div>
-
-      <div class="glass" style="padding: 1.25rem; margin-bottom: 1.5rem;">
-        <label class="control-label" for="codePromptInput" style="margin-bottom: 6px;">طلب البرمجة وتصميم الويب:</label>
-        <textarea id="codePromptInput" class="control-textarea" rows="3">Create a complete, modern, self-contained single-page interactive Pomodoro Focus Timer widget using pure HTML, CSS, and JavaScript.
-Requirements:
-1. Animated SVG circular countdown timer that smoothly updates every second.
-2. Start, Pause, and Reset controls with micro-animations and glowing hover effects.
-3. Mode switcher (25m Focus, 5m Short Break, 15m Long Break).
-4. Premium dark glassmorphism styling with modern typography.
-5. Sound notification synthesized using the Web Audio API when session ends.
-Output ONLY complete valid HTML with embedded <style> and <script> inside an ```html code block.</textarea>
-      </div>
-
-      <!-- Code Benchmark Cards Grid with Live Sandboxes -->
-      <div class="benchmark-card-grid" id="codeBenchmarkGrid">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-
-    <!-- ========================================================
-         TAB 5: UNIVERSAL SDK INTEGRATION GUIDE
+         TAB 3: INTEGRATION SDK & SYNTAX-COLORED CODE EXPORTER
          ======================================================== -->
     <section class="tab-pane" id="tab-sdk">
       <div class="section-header">
         <div>
-          <h2 class="section-title"><span>📦</span> Universal SDK & Integration Code Generator</h2>
-          <p class="section-desc">Ready-to-use snippets to drop this multi-key rotator into ANY project you build (Python, FastAPI, LangChain, Cursor, or Node).</p>
+          <h2 class="section-title"><span>📦</span> Universal Integration SDK (Ready-to-Use in Every Project)</h2>
+          <p class="section-desc">Fully visible, colored code snippets with one-click copy buttons. Drop directly into FastAPI, LangChain, Cursor, Python scripts, or Node.js.</p>
         </div>
       </div>
 
       <div class="snippet-grid">
-        <!-- Snippet 1: Native Python Service -->
+
+        <!-- Snippet 1: Python Direct Service Import -->
         <div class="code-block-wrapper glass">
           <div class="code-block-header">
-            <span class="code-lang-tag">Python (Direct Service Import)</span>
-            <button class="code-copy-btn" onclick="copySnippet('pythonSnippet')">Copy Code</button>
+            <span class="code-lang-tag"><span>🐍</span> Python (Direct Framework Import)</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'pythonSnippet')">
+              <span>📋</span> Copy Code
+            </button>
           </div>
-          <pre class="code-snippet" id="pythonSnippet"><code>from app.services.inference import InferenceService
+          <pre class="code-snippet" id="pythonSnippet"><code><span class="hl-keyword">from</span> app.services.inference <span class="hl-keyword">import</span> InferenceService
 
-# High-speed chat completion with 6-key auto-failover
-response = await InferenceService.chat_completion(
-    model="qwen/qwen3.8-27b",
-    messages=[
-        {"role": "system", "content": "You are an expert coder."},
-        {"role": "user", "content": "Write a debounce function in JS."}
+<span class="hl-comment"># High-speed chat completion with automatic 6-key rotation and failover</span>
+<span class="hl-keyword">async</span> <span class="hl-keyword">def</span> <span class="hl-func">run_completion</span>():
+    response = <span class="hl-keyword">await</span> InferenceService.<span class="hl-func">chat_completion</span>(
+        <span class="hl-param">model</span>=<span class="hl-string">"qwen/qwen3.8-27b"</span>,
+        <span class="hl-param">messages</span>=[
+            {<span class="hl-string">"role"</span>: <span class="hl-string">"system"</span>, <span class="hl-string">"content"</span>: <span class="hl-string">"You are an expert AI assistant."</span>},
+            {<span class="hl-string">"role"</span>: <span class="hl-string">"user"</span>, <span class="hl-string">"content"</span>: <span class="hl-string">"Write a Python retry decorator."</span>}
+        ],
+        <span class="hl-param">temperature</span>=<span class="hl-number">0.3</span>,
+        <span class="hl-param">max_tokens</span>=<span class="hl-number">1024</span>
+    )
+
+    answer = response[<span class="hl-string">"choices"</span>][<span class="hl-number">0</span>][<span class="hl-string">"message"</span>][<span class="hl-string">"content"</span>]
+    meta = response[<span class="hl-string">"_rotator"</span>]
+    
+    <span class="hl-func">print</span>(answer)
+    <span class="hl-func">print</span>(<span class="hl-string">f"✓ Served by: {meta['key_name']} in {meta['latency_ms']}ms via {meta['strategy']}"</span>)</code></pre>
+        </div>
+
+        <!-- Snippet 2: OpenAI Python Client (Local Proxy) -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag"><span>🤖</span> OpenAI Python SDK (Using Local Proxy)</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'openaiSnippet')">
+              <span>📋</span> Copy Code
+            </button>
+          </div>
+          <pre class="code-snippet" id="openaiSnippet"><code><span class="hl-keyword">from</span> openai <span class="hl-keyword">import</span> OpenAI
+
+<span class="hl-comment"># Point standard OpenAI client to your running Universal Framework</span>
+<span class="hl-comment"># The proxy handles all 6 Groq keys, rate limits, and failover automatically!</span>
+client = <span class="hl-func">OpenAI</span>(
+    <span class="hl-param">base_url</span>=<span class="hl-string">"http://localhost:8000/v1"</span>,
+    <span class="hl-param">api_key</span>=<span class="hl-string">"groq-rotator"</span>  <span class="hl-comment"># Any string: proxy manages the keys</span>
+)
+
+completion = client.chat.completions.<span class="hl-func">create</span>(
+    <span class="hl-param">model</span>=<span class="hl-string">"openai/gpt-oss-120b"</span>,
+    <span class="hl-param">messages</span>=[
+        {<span class="hl-string">"role"</span>: <span class="hl-string">"user"</span>, <span class="hl-string">"content"</span>: <span class="hl-string">"Explain async concurrency in 2 sentences."</span>}
     ],
-    temperature=0.3
+    <span class="hl-param">temperature</span>=<span class="hl-number">0.7</span>
 )
 
-print(response["choices"][0]["message"]["content"])
-print(f"Served by: {response['_rotator']['key_name']} in {response['_rotator']['latency_ms']}ms")</code></pre>
+<span class="hl-func">print</span>(completion.choices[<span class="hl-number">0</span>].message.content)</code></pre>
         </div>
 
-        <!-- Snippet 2: OpenAI Python SDK Proxy -->
+        <!-- Snippet 3: Python Real-Time SSE Streaming -->
         <div class="code-block-wrapper glass">
           <div class="code-block-header">
-            <span class="code-lang-tag">OpenAI Python SDK (Local Proxy)</span>
-            <button class="code-copy-btn" onclick="copySnippet('openaiSnippet')">Copy Code</button>
+            <span class="code-lang-tag"><span>⚡</span> Python Real-Time SSE Token Streaming</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'streamSnippet')">
+              <span>📋</span> Copy Code
+            </button>
           </div>
-          <pre class="code-snippet" id="openaiSnippet"><code>from openai import OpenAI
+          <pre class="code-snippet" id="streamSnippet"><code><span class="hl-keyword">from</span> app.services.inference <span class="hl-keyword">import</span> InferenceService
 
-# Zero-configuration: points to your running local proxy!
-client = OpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="any-string" # Proxy automatically rotates the 6 keys
-)
-
-completion = client.chat.completions.create(
-    model="openai/gpt-oss-120b",
-    messages=[{"role": "user", "content": "Explain async await"}],
-    temperature=0.7
-)
-
-print(completion.choices[0].message.content)</code></pre>
+<span class="hl-comment"># Real-time token streaming with failover on initial connection</span>
+<span class="hl-keyword">async</span> <span class="hl-keyword">def</span> <span class="hl-func">stream_response</span>():
+    messages = [{<span class="hl-string">"role"</span>: <span class="hl-string">"user"</span>, <span class="hl-string">"content"</span>: <span class="hl-string">"أهلاً بك، ما هي أهم مميزات الذكاء الاصطناعي؟"</span>}]
+    
+    <span class="hl-keyword">async</span> <span class="hl-keyword">for</span> chunk <span class="hl-keyword">in</span> InferenceService.<span class="hl-func">stream_chat</span>(
+        <span class="hl-param">model</span>=<span class="hl-string">"allam-2-7b"</span>,
+        <span class="hl-param">messages</span>=messages,
+        <span class="hl-param">temperature</span>=<span class="hl-number">0.7</span>
+    ):
+        <span class="hl-keyword">if</span> chunk.get(<span class="hl-string">"type"</span>) == <span class="hl-string">"token"</span>:
+            <span class="hl-func">print</span>(chunk[<span class="hl-string">"token"</span>], <span class="hl-param">end</span>=<span class="hl-string">""</span>, <span class="hl-param">flush</span>=<span class="hl-keyword">True</span>)
+        <span class="hl-keyword">elif</span> chunk.get(<span class="hl-string">"type"</span>) == <span class="hl-string">"done"</span>:
+            meta = chunk[<span class="hl-string">"meta"</span>]
+            <span class="hl-func">print</span>(<span class="hl-string">f"\n\n[Done: {meta['tokens']} tokens | {meta['latency_ms']}ms | {meta['key_name']}]"</span>)</code></pre>
         </div>
 
-        <!-- Snippet 3: LangChain Integration -->
+        <!-- Snippet 4: LangChain Integration -->
         <div class="code-block-wrapper glass">
           <div class="code-block-header">
-            <span class="code-lang-tag">LangChain Integration</span>
-            <button class="code-copy-btn" onclick="copySnippet('langchainSnippet')">Copy Code</button>
+            <span class="code-lang-tag"><span>🦜</span> LangChain / AI Agent Integration</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'langchainSnippet')">
+              <span>📋</span> Copy Code
+            </button>
           </div>
-          <pre class="code-snippet" id="langchainSnippet"><code>from langchain_openai import ChatOpenAI
+          <pre class="code-snippet" id="langchainSnippet"><code><span class="hl-keyword">from</span> langchain_openai <span class="hl-keyword">import</span> ChatOpenAI
 
-llm = ChatOpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="groq-rotator",
-    model="allam-2-7b",
-    temperature=0.7
+<span class="hl-comment"># Drop into any LangChain pipeline, autonomous agent, or RAG system</span>
+llm = <span class="hl-func">ChatOpenAI</span>(
+    <span class="hl-param">base_url</span>=<span class="hl-string">"http://localhost:8000/v1"</span>,
+    <span class="hl-param">api_key</span>=<span class="hl-string">"groq-rotator"</span>,
+    <span class="hl-param">model</span>=<span class="hl-string">"allam-2-7b"</span>,
+    <span class="hl-param">temperature</span>=<span class="hl-number">0.7</span>
 )
 
-response = llm.invoke("اكتب خطة تسويقية لمشروع ذكاء اصطناعي")
-print(response.content)</code></pre>
+response = llm.<span class="hl-func">invoke</span>(<span class="hl-string">"اكتب خطة إطلاق تطبيق ذكاء اصطناعي في 5 نقاط"</span>)
+<span class="hl-func">print</span>(response.content)</code></pre>
         </div>
 
-        <!-- Snippet 4: cURL & REST API -->
+        <!-- Snippet 5: JavaScript / TypeScript Fetch -->
         <div class="code-block-wrapper glass">
           <div class="code-block-header">
-            <span class="code-lang-tag">cURL / REST API</span>
-            <button class="code-copy-btn" onclick="copySnippet('curlSnippet')">Copy Code</button>
+            <span class="code-lang-tag"><span>🌐</span> JavaScript / TypeScript (Node or Browser)</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'jsSnippet')">
+              <span>📋</span> Copy Code
+            </button>
           </div>
-          <pre class="code-snippet" id="curlSnippet"><code>curl -X POST http://localhost:8000/api/inference/chat \
-  -H "Content-Type: application/json" \
-  -d '{
+          <pre class="code-snippet" id="jsSnippet"><code><span class="hl-comment">// Universal fetch call to the framework</span>
+<span class="hl-keyword">const</span> response = <span class="hl-keyword">await</span> <span class="hl-func">fetch</span>(<span class="hl-string">'http://localhost:8000/v1/chat/completions'</span>, {
+  <span class="hl-param">method</span>: <span class="hl-string">'POST'</span>,
+  <span class="hl-param">headers</span>: { <span class="hl-string">'Content-Type'</span>: <span class="hl-string">'application/json'</span> },
+  <span class="hl-param">body</span>: JSON.<span class="hl-func">stringify</span>({
+    <span class="hl-param">model</span>: <span class="hl-string">'qwen/qwen3.8-27b'</span>,
+    <span class="hl-param">messages</span>: [{ <span class="hl-param">role</span>: <span class="hl-string">'user'</span>, <span class="hl-param">content</span>: <span class="hl-string">'Hello from frontend!'</span> }],
+    <span class="hl-param">temperature</span>: <span class="hl-number">0.7</span>
+  })
+});
+
+<span class="hl-keyword">const</span> data = <span class="hl-keyword">await</span> response.<span class="hl-func">json</span>();
+<span class="hl-func">console</span>.<span class="hl-func">log</span>(data.choices[<span class="hl-number">0</span>].message.content);
+<span class="hl-func">console</span>.<span class="hl-func">log</span>(<span class="hl-string">'Rotator info:'</span>, data._rotator);</code></pre>
+        </div>
+
+        <!-- Snippet 6: cURL Command -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag"><span>📡</span> cURL / Terminal Command</span>
+            <button class="code-copy-btn" onclick="copySnippetText(this, 'curlSnippet')">
+              <span>📋</span> Copy Code
+            </button>
+          </div>
+          <pre class="code-snippet" id="curlSnippet"><code>curl -X POST http://localhost:8000/v1/chat/completions \
+  -H <span class="hl-string">"Content-Type: application/json"</span> \
+  -d <span class="hl-string">'{
     "model": "qwen/qwen3.8-27b",
-    "messages": [{"role": "user", "content": "Hello Groq Rotator!"}],
-    "temperature": 0.7
-  }'</code></pre>
+    "messages": [
+      {"role": "user", "content": "Explain key rotation in one sentence"}
+    ],
+    "temperature": 0.5
+  }'</span></code></pre>
         </div>
+
       </div>
     </section>
 
