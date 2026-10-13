@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal AI Framework | Enterprise Groq Multi-Key Rotator & Inference Platform</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="brand-icon">G</div>
+      <div>
+        <h1 class="brand-title">Universal AI Framework</h1>
+      </div>
+      <span class="brand-badge" id="headerStrategyBadge">Smart-Adaptive</span>
+    </div>
+
+    <nav class="nav-tabs" aria-label="Main Navigation">
+      <button class="tab-btn active" data-tab="tab-monitor" id="navMonitorBtn">
+        <span>📊</span> Key Pool Monitor
+      </button>
+      <button class="tab-btn" data-tab="tab-playground" id="navPlaygroundBtn">
+        <span>💬</span> Playground
+      </button>
+      <button class="tab-btn" data-tab="tab-arabic" id="navArabicBtn">
+        <span>🎬</span> Arabic Video Script
+      </button>
+      <button class="tab-btn" data-tab="tab-webdesign" id="navWebDesignBtn">
+        <span>💻</span> Web Design & Sandbox
+      </button>
+      <button class="tab-btn" data-tab="tab-sdk" id="navSdkBtn">
+        <span>📦</span> Integration SDK
+      </button>
+    </nav>
+
+    <div class="header-status">
+      <div class="status-indicator" id="poolStatusIndicator">
+        <span class="status-dot"></span>
+        <span id="activeKeysCount">6 / 6 Keys Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Content -->
+  <main class="main-content">
+
+    <!-- ========================================================
+         TAB 1: KEY POOL MONITOR & FAILOVER DASHBOARD
+         ======================================================== -->
+    <section class="tab-pane active" id="tab-monitor">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><span>🔑</span> Multi-Key Rotation Pool & Real-Time Headroom</h2>
+          <p class="section-desc">Automatic failover across 6 Groq API keys with intelligent token and rate-limit tracking.</p>
+        </div>
+      </div>
+
+      <div class="pool-controls-bar glass">
+        <div class="strategy-selector">
+          <label class="select-label" for="strategySelect">Rotation Strategy:</label>
+          <select id="strategySelect" class="custom-select">
+            <option value="smart-adaptive">Smart-Adaptive (Highest Quota Headroom)</option>
+            <option value="round-robin">Round-Robin (Sequential Cycling)</option>
+            <option value="failover-sequential">Failover-Sequential (Active-Standby)</option>
+            <option value="least-used">Least-Used (Load-Balanced Calls)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn" id="testAllKeysBtn">
+            <span>⚡</span> Test All Keys Health
+          </button>
+          <button class="btn btn-primary" id="openAddKeyModalBtn">
+            <span>+</span> Add Custom Key
+          </button>
+        </div>
+      </div>
+
+      <!-- Key Cards Grid -->
+      <div class="keys-grid" id="keysGrid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Live Terminal Event Log -->
+      <div class="event-log-container glass">
+        <div class="terminal-header">
+          <span class="terminal-title"><span>⚡</span> Live Failover & Rotation Ticker</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);" id="logLastUpdated">Live stream</span>
+        </div>
+        <div class="terminal-box" id="terminalLog">
+          <div class="log-entry">
+            <span class="log-time">[00:00:00]</span>
+            <span class="log-tag tag-KEY_REGISTERED">READY</span>
+            <span>Universal AI Framework initialized with 6 Groq API keys.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         TAB 2: INFERENCE PLAYGROUND & CHAT
+         ======================================================== -->
+    <section class="tab-pane" id="tab-playground">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><span>💬</span> Multi-Model Inference Playground</h2>
+          <p class="section-desc">Test real-time chat and streaming across all active Groq models with seamless key rotation.</p>
+        </div>
+      </div>
+
+      <div class="playground-grid">
+        <!-- Sidebar Controls -->
+        <aside class="playground-sidebar glass">
+          <div class="control-group">
+            <label class="control-label" for="modelSelect">Active Model:</label>
+            <select id="modelSelect" class="custom-select">
+              <option value="qwen/qwen3.8-27b">Qwen 3.8 (27B) - Best Code & Reasoning</option>
+              <option value="allam-2-7b">ALLaM 2 (7B) - Arabic Specialist</option>
+              <option value="openai/gpt-oss-120b">GPT OSS 120B - Deep Reasoning</option>
+              <option value="openai/gpt-oss-20b">GPT OSS 20B - Fast Reasoning</option>
+              <option value="openai/gpt-oss-safeguard-20b">GPT OSS Safeguard 20B - Moderation</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="systemPromptInput">System Prompt:</label>
+            <textarea id="systemPromptInput" class="control-textarea" rows="3" placeholder="You are an expert, helpful AI assistant."></textarea>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              <span>Temperature</span>
+              <span id="tempVal">0.7</span>
+            </label>
+            <input type="range" id="tempSlider" class="range-slider" min="0" max="1" step="0.05" value="0.7">
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              <span>Max Tokens</span>
+              <span id="tokensVal">1024</span>
+            </label>
+            <input type="range" id="tokensSlider" class="range-slider" min="64" max="4096" step="64" value="1024">
+          </div>
+
+          <div class="control-group" style="flex-direction: row; align-items: center; justify-content: space-between; margin-top: 6px;">
+            <label class="control-label" for="streamToggle" style="margin-bottom: 0; cursor: pointer;">Enable Real-time Stream</label>
+            <input type="checkbox" id="streamToggle" checked style="accent-color: var(--groq-orange); cursor: pointer; width: 18px; height: 18px;">
+          </div>
+
+          <button class="btn btn-sm" id="clearChatBtn" style="margin-top: 10px;">
+            <span>🗑️</span> Clear Chat
+          </button>
+        </aside>
+
+        <!-- Chat Container -->
+        <div class="chat-container glass">
+          <div class="chat-history" id="chatHistory">
+            <div class="chat-bubble assistant">
+              <p>👋 Welcome! I am ready to test any model via the Universal AI Framework with automatic 6-key rotation and failover. What would you like to run?</p>
+              <div class="bubble-meta">
+                <span>⚡ Key Pool Ready</span>
+                <span>•</span>
+                <span>Groq High-Speed API</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Type a prompt or question..." autocomplete="off">
+            <button class="btn btn-primary" id="sendChatBtn">
+              <span>Send</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         TAB 3: ARABIC VIDEO SCRIPT BENCHMARK
+         ======================================================== -->
+    <section class="tab-pane" id="tab-arabic">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><span>🎬</span> اختبار كتابة سيناريو فيديو احترافي باللغة العربية</h2>
+          <p class="section-desc">مقارنة شاملة بين النماذج لكتابة سيناريو تيك توك وريلز مع خطاف جاذب، حركة كاميرا، ومؤثرات صوتية (SFX).</p>
+        </div>
+        <button class="btn btn-primary" id="runArabicBenchmarkBtn">
+          <span>🚀</span> تشغيل الاختبار على جميع النماذج
+        </button>
+      </div>
+
+      <div class="benchmark-presets">
+        <span style="font-size: 0.85rem; color: var(--text-muted); align-self: center;">موضوعات مقترحة:</span>
+        <button class="preset-chip arabic-preset" data-topic="كيف تستخدم الذكاء الاصطناعي لزيادة إنتاجيتك بنسبة 300% في عام 2026">💡 زيادة الإنتاجية 300% بالذكاء الاصطناعي</button>
+        <button class="preset-chip arabic-preset" data-topic="إعلان منتج ساعة ذكية جديدة بميزة صحية ثورية بأسلوب خطاف يمنع التمرير">⌚ إعلان تجاري تشويقي لساعة ذكية</button>
+        <button class="preset-chip arabic-preset" data-topic="أقوى 3 أدوات ذكاء اصطناعي سرية لا يعرفها 99% من الناس">🔥 3 أدوات ذكاء اصطناعي سرية</button>
+        <button class="preset-chip arabic-preset" data-topic="قصة نجاح رائد أعمال بدأ من الصفر وحقق أول مليون دولار في 18 شهر">🚀 قصة ملهمة: من الصفر إلى مليون دولار</button>
+      </div>
+
+      <div class="glass" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <label class="control-label" for="arabicTopicInput" style="margin-bottom: 6px;">موضوع السيناريو المطلوب:</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="arabicTopicInput" class="control-input" style="flex: 1; font-family: var(--font-arabic); direction: rtl;" value="كيف تستخدم الذكاء الاصطناعي لزيادة إنتاجيتك بنسبة 300% في عام 2026">
+        </div>
+      </div>
+
+      <!-- Arabic Benchmark Cards Grid -->
+      <div class="benchmark-card-grid" id="arabicBenchmarkGrid">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         TAB 4: WEB DESIGN & LIVE CODE SANDBOX BENCHMARK
+         ======================================================== -->
+    <section class="tab-pane" id="tab-webdesign">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><span>💻</span> اختبار برمجة كود الويب التفاعلي (HTML/CSS/JS)</h2>
+          <p class="section-desc">اختبار النماذج في بناء تطبيقات ويب تفاعلية متكاملة مع نافذة تشغيل ومعاينة حية ومباشرة (Live Sandbox).</p>
+        </div>
+        <button class="btn btn-primary" id="runCodeBenchmarkBtn">
+          <span>🚀</span> تشغيل الاختبار ومعاينة الكود
+        </button>
+      </div>
+
+      <div class="benchmark-presets">
+        <span style="font-size: 0.85rem; color: var(--text-muted); align-self: center;">تحديات البرمجة الجاهزة:</span>
+        <button class="preset-chip code-preset" data-challenge="pomodoro">⏱️ مؤقت بومودورو تفاعلي مع حلقة SVG وصوت</button>
+        <button class="preset-chip code-preset" data-challenge="crypto">📈 بطاقة أسعار عملات رقمية مع رسم بياني Canvas مباشر</button>
+        <button class="preset-chip code-preset" data-challenge="fireworks">🎆 محاكاة ألعاب نارية وجزيئات Canvas تفاعلية بالماوس</button>
+        <button class="preset-chip code-preset" data-challenge="kanban">📋 لوحة كانبان مهام تفاعلية مع السحب والإفلات (Drag & Drop)</button>
+      </div>
+
+      <div class="glass" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <label class="control-label" for="codePromptInput" style="margin-bottom: 6px;">طلب البرمجة وتصميم الويب:</label>
+        <textarea id="codePromptInput" class="control-textarea" rows="3">Create a complete, modern, self-contained single-page interactive Pomodoro Focus Timer widget using pure HTML, CSS, and JavaScript.
+Requirements:
+1. Animated SVG circular countdown timer that smoothly updates every second.
+2. Start, Pause, and Reset controls with micro-animations and glowing hover effects.
+3. Mode switcher (25m Focus, 5m Short Break, 15m Long Break).
+4. Premium dark glassmorphism styling with modern typography.
+5. Sound notification synthesized using the Web Audio API when session ends.
+Output ONLY complete valid HTML with embedded <style> and <script> inside an ```html code block.</textarea>
+      </div>
+
+      <!-- Code Benchmark Cards Grid with Live Sandboxes -->
+      <div class="benchmark-card-grid" id="codeBenchmarkGrid">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         TAB 5: UNIVERSAL SDK INTEGRATION GUIDE
+         ======================================================== -->
+    <section class="tab-pane" id="tab-sdk">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><span>📦</span> Universal SDK & Integration Code Generator</h2>
+          <p class="section-desc">Ready-to-use snippets to drop this multi-key rotator into ANY project you build (Python, FastAPI, LangChain, Cursor, or Node).</p>
+        </div>
+      </div>
+
+      <div class="snippet-grid">
+        <!-- Snippet 1: Native Python Service -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag">Python (Direct Service Import)</span>
+            <button class="code-copy-btn" onclick="copySnippet('pythonSnippet')">Copy Code</button>
+          </div>
+          <pre class="code-snippet" id="pythonSnippet"><code>from app.services.inference import InferenceService
+
+# High-speed chat completion with 6-key auto-failover
+response = await InferenceService.chat_completion(
+    model="qwen/qwen3.8-27b",
+    messages=[
+        {"role": "system", "content": "You are an expert coder."},
+        {"role": "user", "content": "Write a debounce function in JS."}
+    ],
+    temperature=0.3
+)
+
+print(response["choices"][0]["message"]["content"])
+print(f"Served by: {response['_rotator']['key_name']} in {response['_rotator']['latency_ms']}ms")</code></pre>
+        </div>
+
+        <!-- Snippet 2: OpenAI Python SDK Proxy -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag">OpenAI Python SDK (Local Proxy)</span>
+            <button class="code-copy-btn" onclick="copySnippet('openaiSnippet')">Copy Code</button>
+          </div>
+          <pre class="code-snippet" id="openaiSnippet"><code>from openai import OpenAI
+
+# Zero-configuration: points to your running local proxy!
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="any-string" # Proxy automatically rotates the 6 keys
+)
+
+completion = client.chat.completions.create(
+    model="openai/gpt-oss-120b",
+    messages=[{"role": "user", "content": "Explain async await"}],
+    temperature=0.7
+)
+
+print(completion.choices[0].message.content)</code></pre>
+        </div>
+
+        <!-- Snippet 3: LangChain Integration -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag">LangChain Integration</span>
+            <button class="code-copy-btn" onclick="copySnippet('langchainSnippet')">Copy Code</button>
+          </div>
+          <pre class="code-snippet" id="langchainSnippet"><code>from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="groq-rotator",
+    model="allam-2-7b",
+    temperature=0.7
+)
+
+response = llm.invoke("اكتب خطة تسويقية لمشروع ذكاء اصطناعي")
+print(response.content)</code></pre>
+        </div>
+
+        <!-- Snippet 4: cURL & REST API -->
+        <div class="code-block-wrapper glass">
+          <div class="code-block-header">
+            <span class="code-lang-tag">cURL / REST API</span>
+            <button class="code-copy-btn" onclick="copySnippet('curlSnippet')">Copy Code</button>
+          </div>
+          <pre class="code-snippet" id="curlSnippet"><code>curl -X POST http://localhost:8000/api/inference/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen/qwen3.8-27b",
+    "messages": [{"role": "user", "content": "Hello Groq Rotator!"}],
+    "temperature": 0.7
+  }'</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Add Key Modal -->
+  <div class="modal-overlay" id="addKeyModal">
+    <div class="modal-box glass">
+      <h3 class="modal-title">Add New Groq API Key</h3>
+      <div class="control-group" style="margin-bottom: 12px;">
+        <label class="control-label" for="newKeyName">Key Label (Optional):</label>
+        <input type="text" id="newKeyName" class="control-input" placeholder="e.g. Backup Key 7">
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="newKeyVal">Groq API Key (gsk_...):</label>
+        <input type="password" id="newKeyVal" class="control-input" placeholder="gsk_...">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="closeAddKeyModalBtn">Cancel</button>
+        <button class="btn btn-primary" id="submitAddKeyBtn">Register Key</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
