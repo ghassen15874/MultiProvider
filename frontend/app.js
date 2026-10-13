@@ -145,11 +145,23 @@ async function fetchPoolStatus() {
       state.events = data.recent_events || [];
       state.strategy = data.strategy || 'smart-adaptive';
 
-      // Update Header Indicator
+      // Update Header & KPI Indicators
       const available = data.available_keys || 0;
       const total = data.total_keys || 0;
-      document.getElementById('activeKeysCount').textContent = `${available} / ${total} Keys Online`;
+      document.getElementById('activeKeysCount').textContent = `${available} / ${total} Online`;
       document.getElementById('headerStrategyBadge').textContent = formatStrategy(state.strategy);
+
+      // Aggregate Headroom Stats
+      const totalRemTokens = state.keys.reduce((acc, k) => acc + (k.remaining_tokens || 0), 0);
+      const totalRemReqs = state.keys.reduce((acc, k) => acc + (k.remaining_requests || 0), 0);
+
+      const kpiHealth = document.getElementById('kpiHealthVal');
+      const kpiTokens = document.getElementById('kpiTokensVal');
+      const kpiReqs = document.getElementById('kpiRequestsVal');
+
+      if (kpiHealth) kpiHealth.textContent = `${available} / ${total}`;
+      if (kpiTokens) kpiTokens.textContent = totalRemTokens.toLocaleString();
+      if (kpiReqs) kpiReqs.textContent = totalRemReqs.toLocaleString();
 
       renderKeyCards(state.keys);
       renderTerminalLog(state.events);
@@ -174,7 +186,7 @@ function renderKeyCards(keys) {
     const reqPct = Math.min(100, Math.max(0, (k.remaining_requests / Math.max(1, k.limit_requests)) * 100));
 
     let statusPillClass = 'pill-active';
-    let statusText = 'Active';
+    let statusText = 'Ready / Active';
     if (isCooling) {
       statusPillClass = 'pill-cooling';
       statusText = `Cooling (${k.cooldown_remaining_sec}s)`;
@@ -186,10 +198,10 @@ function renderKeyCards(keys) {
     card.innerHTML = `
       <div class="key-card-header">
         <div class="key-title-area">
-          <div class="key-num-badge">${idx + 1}</div>
+          <div class="key-index-chip">#0${idx + 1}</div>
           <div>
-            <div class="key-name">${k.name}</div>
-            <div class="key-masked">${k.masked_key}</div>
+            <div class="key-name-title">${k.name}</div>
+            <div style="margin-top: 2px;"><span class="key-masked-code">${k.masked_key}</span></div>
           </div>
         </div>
         <span class="key-status-pill ${statusPillClass}">${statusText}</span>

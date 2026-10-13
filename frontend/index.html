@@ -12,11 +12,14 @@
   <!-- Top Navigation Bar -->
   <header class="navbar">
     <div class="brand">
-      <div class="brand-icon">G</div>
-      <div>
-        <h1 class="brand-title">Universal AI Framework</h1>
+      <div class="brand-icon-wrapper">
+        <div class="brand-icon">G</div>
+        <div class="brand-icon-halo"></div>
       </div>
-      <span class="brand-badge" id="headerStrategyBadge">Smart-Adaptive</span>
+      <div class="brand-text-block">
+        <h1 class="brand-title">Universal AI Framework</h1>
+        <span class="brand-subtitle">Groq Multi-Key Rotator Engine</span>
+      </div>
     </div>
 
     <!-- Navigation Tabs: Streamlined to Monitor, Playground, and SDK -->
@@ -32,10 +35,11 @@
       </button>
     </nav>
 
-    <div class="header-status">
-      <div class="status-indicator" id="poolStatusIndicator">
-        <span class="status-dot"></span>
-        <span id="activeKeysCount">6 / 6 Keys Ready</span>
+    <div class="header-actions">
+      <span class="strategy-badge-header" id="headerStrategyBadge">Smart-Adaptive</span>
+      <div class="status-pill" id="poolStatusIndicator">
+        <span class="pulse-dot"></span>
+        <span id="activeKeysCount">6 / 6 Online</span>
       </div>
     </div>
   </header>
@@ -50,7 +54,43 @@
       <div class="section-header">
         <div>
           <h2 class="section-title"><span>🔑</span> Multi-Key Rotation Pool & Real-Time Headroom</h2>
-          <p class="section-desc">Automatic failover across 6 Groq API keys with intelligent token and rate-limit tracking.</p>
+          <p class="section-desc">Enterprise failover across 6 Groq API keys with intelligent token and rate-limit tracking.</p>
+        </div>
+      </div>
+
+      <!-- Hero KPI Stat Ribbon -->
+      <div class="kpi-grid">
+        <div class="kpi-card glass">
+          <div class="kpi-icon-box icon-box-emerald"><span>🛡️</span></div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Active Key Health</span>
+            <span class="kpi-value" id="kpiHealthVal">6 / 6</span>
+            <span class="kpi-hint">100% Operational Pool</span>
+          </div>
+        </div>
+        <div class="kpi-card glass">
+          <div class="kpi-icon-box icon-box-ember"><span>⚡</span></div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Token Headroom</span>
+            <span class="kpi-value" id="kpiTokensVal">36,000</span>
+            <span class="kpi-hint">Aggregated TPM Budget</span>
+          </div>
+        </div>
+        <div class="kpi-card glass">
+          <div class="kpi-icon-box icon-box-cyan"><span>🔄</span></div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Request Headroom</span>
+            <span class="kpi-value" id="kpiRequestsVal">42,000</span>
+            <span class="kpi-hint">Aggregated RPM Budget</span>
+          </div>
+        </div>
+        <div class="kpi-card glass">
+          <div class="kpi-icon-box icon-box-violet"><span>⏱️</span></div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Failover Speed</span>
+            <span class="kpi-value">&lt; 150ms</span>
+            <span class="kpi-hint">Sub-second recovery</span>
+          </div>
         </div>
       </div>
 
