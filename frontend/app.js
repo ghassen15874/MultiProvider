@@ -1,6 +1,6 @@
 /**
  * Universal AI Framework - Frontend Application Controller
- * Handles Key Pool Dashboard, SSE Streaming Playground, Arabic Benchmark, and Live Web Design Sandbox.
+ * Handles Key Pool Dashboard, Dynamic Groq Model Selector, Real-time SSE Chat, and Syntax-Colored SDK Exporter.
  */
 
 // State
@@ -9,7 +9,8 @@ const state = {
   strategy: 'smart-adaptive',
   keys: [],
   events: [],
-  models: {},
+  groqModels: [],
+  modelsCatalog: {},
   chatHistory: [],
   isGeneratingChat: false,
   pollTimer: null
@@ -20,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initControls();
   initPlayground();
-  initArabicBenchmark();
-  initCodeBenchmark();
+  loadAllGroqModels();
   
   // Initial fetch and start polling pool status
   fetchPoolStatus();
@@ -258,7 +258,57 @@ function renderTerminalLog(events) {
 }
 
 // ========================================================
-// 3. Playground & Live Streaming Chat
+// 3. Load All Groq Models Dynamically
+// ========================================================
+async function loadAllGroqModels() {
+  try {
+    const res = await fetch('/api/models');
+    const data = await res.json();
+    if (data.status === 'ok') {
+      state.groqModels = data.groq_models || [];
+      state.modelsCatalog = data.models || {};
+      
+      const select = document.getElementById('modelSelect');
+      const badge = document.getElementById('modelTagBadge');
+
+      select.addEventListener('change', () => {
+        const selectedVal = select.value;
+        const meta = state.modelsCatalog[selectedVal];
+        if (meta && meta.context_window) {
+          badge.textContent = `${meta.context_window >= 1000 ? Math.round(meta.context_window/1000) + 'k' : meta.context_window} Context`;
+        } else {
+          badge.textContent = 'Groq Console Model';
+        }
+      });
+
+      // Custom model override button
+      const customInput = document.getElementById('customModelInput');
+      const applyCustomBtn = document.getElementById('applyCustomModelBtn');
+      if (applyCustomBtn && customInput) {
+        applyCustomBtn.addEventListener('click', () => {
+          const customVal = customInput.value.trim();
+          if (customVal) {
+            // Check if option exists, or create new option
+            let opt = Array.from(select.options).find(o => o.value === customVal);
+            if (!opt) {
+              opt = document.createElement('option');
+              opt.value = customVal;
+              opt.textContent = `Custom: ${customVal}`;
+              select.appendChild(opt);
+            }
+            select.value = customVal;
+            badge.textContent = 'Custom Model';
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load Groq models:', err);
+  }
+}
+
+// ========================================================
+// 4. Playground & Live Streaming Chat
 // ========================================================
 function initPlayground() {
   const tempSlider = document.getElementById('tempSlider');
@@ -456,326 +506,48 @@ async function handleStreamChat(messages, model, temperature, max_tokens) {
 }
 
 // ========================================================
-// 4. Arabic Video Script Benchmark Controller
+// 5. Code Copy Utility with Visual Feedback
 // ========================================================
-function initArabicBenchmark() {
-  const topicInput = document.getElementById('arabicTopicInput');
-  const runBtn = document.getElementById('runArabicBenchmarkBtn');
-  const grid = document.getElementById('arabicBenchmarkGrid');
+window.copySnippetText = function(btn, elementId) {
+  const elem = document.getElementById(elementId);
+  if (!elem) return;
 
-  // Preset chips
-  document.querySelectorAll('.arabic-preset').forEach(btn => {
-    btn.addEventListener('click', () => {
-      topicInput.value = btn.getAttribute('data-topic');
-    });
-  });
+  // Extract pure code text (ignoring HTML tags)
+  const codeContent = elem.innerText || elem.textContent;
 
-  runBtn.addEventListener('click', async () => {
-    const topic = topicInput.value.trim();
-    if (!topic) return;
-
-    runBtn.disabled = true;
-    runBtn.innerHTML = `<span class="spinner"></span> جاري توليد السيناريو عبر كافة النماذج...`;
-
-    grid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-        <span class="spinner" style="width: 32px; height: 32px; border-width: 3px;"></span>
-        <p style="margin-top: 1rem; color: var(--text-secondary); font-family: var(--font-arabic);">جاري اختبار النماذج الأربعة وتدوير مفاتيح Groq آلياً...</p>
-      </div>
-    `;
-
-    try {
-      const res = await fetch('/api/inference/benchmark/arabic-script', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic })
-      });
-      const data = await res.json();
-      renderArabicResults(data.results);
-      fetchPoolStatus();
-    } catch (err) {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; color: var(--accent-red); padding: 2rem;">خطأ في تشغيل الاختبار: ${err.message}</div>`;
-    } finally {
-      runBtn.disabled = false;
-      runBtn.innerHTML = `<span>🚀</span> تشغيل الاختبار على جميع النماذج`;
-    }
-  });
-}
-
-function renderArabicResults(results) {
-  const grid = document.getElementById('arabicBenchmarkGrid');
-  grid.innerHTML = '';
-
-  results.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'benchmark-card glass';
-
-    if (!r.success) {
-      card.innerHTML = `
-        <div class="benchmark-card-header">
-          <div class="model-title">${r.model}</div>
-          <span class="pill-invalid">Failed</span>
-        </div>
-        <p style="color: var(--accent-red);">Error: ${r.error}</p>
-      `;
-      grid.appendChild(card);
-      return;
-    }
-
-    card.innerHTML = `
-      <div class="benchmark-card-header">
-        <div>
-          <div class="model-title">
-            <span>🤖 ${r.model}</span>
-          </div>
-          <div style="margin-top: 4px;">
-            <span class="model-badge-arabic">${r.score_badge}</span>
-          </div>
-        </div>
-        <div class="perf-metrics-badge">
-          <span>⚡ ${r.speed_tps} t/s</span>
-          <span>•</span>
-          <span>⏱️ ${r.duration_sec}s</span>
-          <span>•</span>
-          <span>🔑 ${r.key_name}</span>
-        </div>
-      </div>
-
-      <div class="arabic-output-box">${escapeHtml(r.content)}</div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; pt: 8px;">
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">Tokens: ${r.tokens}</span>
-        <button class="btn btn-sm" onclick="copyText(this, \`${escapeJs(r.content)}\`)">
-          <span>📋</span> نسخ السيناريو
-        </button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// ========================================================
-// 5. HTML/CSS/JS Web Design & Live Sandbox Controller
-// ========================================================
-function initCodeBenchmark() {
-  const promptInput = document.getElementById('codePromptInput');
-  const runBtn = document.getElementById('runCodeBenchmarkBtn');
-  const grid = document.getElementById('codeBenchmarkGrid');
-
-  // Preset challenges
-  const challenges = {
-    pomodoro: `Create a complete, modern, self-contained single-page interactive Pomodoro Focus Timer widget using pure HTML, CSS, and JavaScript.
-Requirements:
-1. Animated SVG circular countdown timer that smoothly updates every second.
-2. Start, Pause, and Reset controls with micro-animations and glowing hover effects.
-3. Mode switcher (25m Focus, 5m Short Break, 15m Long Break).
-4. Premium dark glassmorphism styling with modern typography.
-5. Sound notification synthesized using the Web Audio API when session ends.
-Output ONLY complete valid HTML with embedded <style> and <script> inside an \`\`\`html code block.`,
-    
-    crypto: `Create a modern, self-contained interactive Crypto/AI Token Live Price Card using pure HTML, CSS, and JavaScript.
-Requirements:
-1. Displays Token Name ($GROQ), Current Price ($42.80), and 24h change (+18.4%).
-2. Interactive HTML5 Canvas sparkline chart showing realistic animated sinusoidal upward wave line with gradient fill.
-3. Timeframe toggles (1H, 24H, 7D, 1M) that redraw the canvas with smooth animation.
-4. Dark glassmorphic neon aesthetic with glowing green borders.
-Output ONLY complete valid HTML with embedded <style> and <script> inside an \`\`\`html code block.`,
-
-    fireworks: `Create a breathtaking interactive particle fireworks animation on an HTML5 canvas using pure HTML, CSS, and JavaScript.
-Requirements:
-1. Full container Canvas with automatic resizing.
-2. Fireworks launch automatically and burst into multicolored glowing particle explosions with gravity and trails.
-3. Click or tap anywhere to launch a firework burst at the cursor position.
-4. Particle speed and color variations (cyan, purple, gold, red).
-5. Minimal UI controls at bottom (Pause/Play, Clear, Particle Count slider).
-Output ONLY complete valid HTML with embedded <style> and <script> inside an \`\`\`html code block.`,
-
-    kanban: `Create an interactive Drag-and-Drop Kanban Task Board using pure HTML, CSS, and JavaScript.
-Requirements:
-1. Three columns: To Do, In Progress, Done.
-2. Ability to add new task card with title.
-3. Native HTML5 drag and drop (dragstart, dragover, drop) to move task cards between columns.
-4. Modern dark glassmorphism UI with vibrant badge tags.
-Output ONLY complete valid HTML with embedded <style> and <script> inside an \`\`\`html code block.`
-  };
-
-  document.querySelectorAll('.code-preset').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const c = btn.getAttribute('data-challenge');
-      if (challenges[c]) promptInput.value = challenges[c];
-    });
-  });
-
-  runBtn.addEventListener('click', async () => {
-    const prompt = promptInput.value.trim();
-    if (!prompt) return;
-
-    runBtn.disabled = true;
-    runBtn.innerHTML = `<span class="spinner"></span> جاري توليد الكود وبناء المعاينة الحية...`;
-
-    grid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-        <span class="spinner" style="width: 32px; height: 32px; border-width: 3px;"></span>
-        <p style="margin-top: 1rem; color: var(--text-secondary);">جاري تشغيل نماذج الذكاء الاصطناعي وبناء المعاينة الحية التفاعلية لكل نموذج...</p>
-      </div>
-    `;
-
-    try {
-      const res = await fetch('/api/inference/benchmark/web-design', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-      const data = await res.json();
-      renderCodeResults(data.results);
-      fetchPoolStatus();
-    } catch (err) {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; color: var(--accent-red); padding: 2rem;">Error: ${err.message}</div>`;
-    } finally {
-      runBtn.disabled = false;
-      runBtn.innerHTML = `<span>🚀</span> تشغيل الاختبار ومعاينة الكود`;
-    }
-  });
-}
-
-function renderCodeResults(results) {
-  const grid = document.getElementById('codeBenchmarkGrid');
-  grid.innerHTML = '';
-
-  results.forEach((r, idx) => {
-    const card = document.createElement('div');
-    card.className = 'benchmark-card glass';
-
-    if (!r.success) {
-      card.innerHTML = `
-        <div class="benchmark-card-header">
-          <div class="model-title">${r.model}</div>
-          <span class="pill-invalid">Failed</span>
-        </div>
-        <p style="color: var(--accent-red);">Error: ${r.error}</p>
-      `;
-      grid.appendChild(card);
-      return;
-    }
-
-    const uniqueId = `sandbox_${idx}_${Date.now()}`;
-    const cleanHtml = r.extracted_html || '';
-
-    card.innerHTML = `
-      <div class="benchmark-card-header">
-        <div>
-          <div class="model-title">
-            <span>🤖 ${r.model}</span>
-          </div>
-          <div style="margin-top: 4px;">
-            <span class="model-badge-code">${r.code_badge}</span>
-          </div>
-        </div>
-        <div class="perf-metrics-badge">
-          <span>⚡ ${r.speed_tps} t/s</span>
-          <span>•</span>
-          <span>⏱️ ${r.duration_sec}s</span>
-          <span>•</span>
-          <span>🔑 ${r.key_name}</span>
-        </div>
-      </div>
-
-      <!-- Live Runner Tabs -->
-      <div class="code-runner-container">
-        <div class="code-tabs-nav">
-          <button class="code-tab-btn active" id="tab_prev_btn_${uniqueId}" onclick="switchCodeTab('${uniqueId}', 'preview')">Live Sandbox Preview</button>
-          <button class="code-tab-btn" id="tab_src_btn_${uniqueId}" onclick="switchCodeTab('${uniqueId}', 'code')">HTML/CSS/JS Source</button>
-        </div>
-
-        <!-- Sandbox iframe -->
-        <div id="prev_box_${uniqueId}">
-          <iframe id="iframe_${uniqueId}" class="live-preview-iframe" sandbox="allow-scripts allow-modals"></iframe>
-        </div>
-
-        <!-- Code Viewer -->
-        <div id="code_box_${uniqueId}" style="display: none;">
-          <pre class="code-viewer-pre"><code>${escapeHtml(cleanHtml)}</code></pre>
-        </div>
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; pt: 8px;">
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">Tokens: ${r.tokens}</span>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-sm" onclick="downloadHtmlFile('${r.model}', \`${escapeJs(cleanHtml)}\`)">
-            <span>💾</span> Download .html
-          </button>
-          <button class="btn btn-sm btn-primary" onclick="copyText(this, \`${escapeJs(cleanHtml)}\`)">
-            <span>📋</span> Copy Code
-          </button>
-        </div>
-      </div>
-    `;
-    grid.appendChild(card);
-
-    // Populate iframe safely
+  navigator.clipboard.writeText(codeContent).then(() => {
+    const originalHtml = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = `<span>✓</span> Copied!`;
     setTimeout(() => {
-      const iframe = document.getElementById(`iframe_${uniqueId}`);
-      if (iframe) {
-        iframe.srcdoc = cleanHtml;
-      }
-    }, 50);
+      btn.classList.remove('copied');
+      btn.innerHTML = originalHtml;
+    }, 2200);
+  }).catch(err => {
+    // Fallback for clipboard API
+    const textArea = document.createElement('textarea');
+    textArea.value = codeContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      btn.classList.add('copied');
+      btn.innerHTML = `<span>✓</span> Copied!`;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = originalHtml;
+      }, 2200);
+    } catch (e) {
+      alert('Failed to copy: ' + e);
+    }
+    document.body.removeChild(textArea);
   });
-}
-
-window.switchCodeTab = function(uniqueId, tab) {
-  const prevBox = document.getElementById(`prev_box_${uniqueId}`);
-  const codeBox = document.getElementById(`code_box_${uniqueId}`);
-  const prevBtn = document.getElementById(`tab_prev_btn_${uniqueId}`);
-  const codeBtn = document.getElementById(`tab_src_btn_${uniqueId}`);
-
-  if (tab === 'preview') {
-    prevBox.style.display = 'block';
-    codeBox.style.display = 'none';
-    prevBtn.classList.add('active');
-    codeBtn.classList.remove('active');
-  } else {
-    prevBox.style.display = 'none';
-    codeBox.style.display = 'block';
-    prevBtn.classList.remove('active');
-    codeBtn.classList.add('active');
-  }
-};
-
-window.downloadHtmlFile = function(modelName, content) {
-  const safeName = modelName.replace(/[^a-zA-Z0-9]/g, '_');
-  const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${safeName}_widget.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-window.copySnippet = function(elemId) {
-  const elem = document.getElementById(elemId);
-  if (elem) {
-    navigator.clipboard.writeText(elem.textContent);
-    alert('Code snippet copied to clipboard!');
-  }
-};
-
-window.copyText = function(btn, text) {
-  navigator.clipboard.writeText(text);
-  const original = btn.innerHTML;
-  btn.innerHTML = `<span>✓</span> Copied!`;
-  setTimeout(() => btn.innerHTML = original, 2000);
 };
 
 // Utilities
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function escapeJs(str) {
-  if (!str) return '';
-  return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
 }
 
 function roundDec(val, dec = 1) {
