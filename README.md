@@ -38,21 +38,6 @@ universal-ai-framework/
 
 ---
 
-## 🔑 Your 6 Pre-Configured Groq API Keys
-
-The framework automatically manages and rotates across your 6 keys:
-
-| # | Masked Key | Initial State | RPM Limit | TPM Limit | Role |
-|---|---|---|---|---|---|
-| **Key 1** | `gsk_Sw4L...AAvg` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-| **Key 2** | `gsk_0VK0...yMUg` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-| **Key 3** | `gsk_vRuN...8Hqj` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-| **Key 4** | `gsk_IwNk...39DV` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-| **Key 5** | `gsk_A9hl...XhRH` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-| **Key 6** | `gsk_5909...sBCl` | Active | 7,000 | 6,000 | Primary Headroom Pool |
-
----
-
 ## 🔄 Rotation & Failover Strategies
 
 1. **Smart-Adaptive (`smart-adaptive`) [Default & Recommended]**:
